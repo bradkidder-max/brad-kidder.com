@@ -1,0 +1,44 @@
+{
+  "crons": [
+    {
+      "path": "/universal/api/notify",
+      "schedule": "* 11-23 10 9 *"
+    },
+    {
+      "path": "/universal/api/notify",
+      "schedule": "* 0-1 11 9 *"
+    }
+  ],
+  "headers": [
+    {
+      "source": "/universal/:path*",
+      "headers": [
+        {
+          "key": "X-Robots-Tag",
+          "value": "noindex, nofollow, noarchive"
+        },
+        {
+          "key": "Referrer-Policy",
+          "value": "same-origin"
+        },
+        {
+          "key": "X-Content-Type-Options",
+          "value": "nosniff"
+        }
+      ]
+    },
+    {
+      "source": "/universal/sw.js",
+      "headers": [
+        {
+          "key": "Service-Worker-Allowed",
+          "value": "/universal"
+        },
+        {
+          "key": "Cache-Control",
+          "value": "no-cache"
+        }
+      ]
+    }
+  ]
+}

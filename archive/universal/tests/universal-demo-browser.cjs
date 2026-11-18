@@ -1,0 +1,17 @@
+const {chromium}=require('@playwright/test');
+const assert=require('node:assert/strict');
+const base=process.env.KIDDER_DEMO_TEST_URL||'http://localhost:3110';
+(async()=>{const browser=await chromium.launch({headless:true,channel:'chrome'});const context=await browser.newContext({viewport:{width:393,height:852}}),page=await context.newPage(),privateRequests=[],errors=[];page.on('request',r=>{if(r.url().includes('/universal/api/'))privateRequests.push(r.url());});page.on('pageerror',e=>errors.push(e.message));await page.addInitScript(()=>{navigator.geolocation.getCurrentPosition=()=>{throw Error('Demo requested GPS')};navigator.geolocation.watchPosition=()=>{throw Error('Demo requested GPS')};Notification.requestPermission=()=>{throw Error('Demo requested notification permission')};});try{
+ await page.goto(base+'/universal-demo');await page.getByRole('heading',{name:/Get a return for/}).waitFor();assert.equal(await page.getByLabel('Family PIN').count(),0);assert((await page.locator('body').innerText()).includes('Hagrid'));
+ const noNames=async()=>{assert(!/\b(Brad|Sarah|Lucy|Michael|Gordon|August|Kidder|Dockside)\b/i.test(await page.locator('body').innerText()));};await noNames();
+ await page.getByRole('button',{name:'Enter the return they give us'}).click();assert(await page.getByLabel('Return time',{exact:true}).isDisabled());await page.getByRole('button',{name:'Close',exact:true}).click();
+ const favorite=page.getByRole('button',{name:/Favorite |Unfavorite /}).first();const before=await favorite.getAttribute('aria-label');await favorite.click();assert.equal(await favorite.getAttribute('aria-label'),before);await page.getByText('View-only demo. No changes are saved',{exact:false}).waitFor();
+ await page.getByRole('button',{name:'Waiting to return',exact:true}).click();await page.getByRole('heading',{name:/Your return is set/}).waitFor();await page.getByRole('button',{name:'In a line',exact:true}).click();await page.getByText('SAMPLE REGULAR LINE',{exact:true}).waitFor();await page.getByRole('button',{name:'We boarded',exact:false}).click();await page.getByText('SAMPLE REGULAR LINE',{exact:true}).waitFor();
+ await page.getByRole('button',{name:'Our day',exact:true}).click();await noNames();assert.equal(await page.getByRole('button',{name:'Enable / test notifications'}).count(),0);
+ await page.getByRole('button',{name:'Map',exact:true}).click();await page.getByRole('button',{name:'Show sample location',exact:true}).click();await page.locator('.leaflet-container').waitFor();
+ await page.getByRole('button',{name:'Get a return',exact:true}).click();await page.reload();await page.getByRole('heading',{name:/Get a return for/}).waitFor();
+ for(const width of [320,393,430]){await page.setViewportSize({width,height:852});assert(!await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth));}
+ await page.setViewportSize({width:393,height:852});await page.screenshot({path:'/tmp/universal-public-demo.png',fullPage:true});assert.deepEqual(privateRequests,[]);assert.deepEqual(errors,[]);assert.equal(await page.evaluate(()=>localStorage.length),0);
+ const privateResult=await context.request.get(base+'/universal/api/bootstrap');assert.equal(privateResult.status(),401);
+ console.log(JSON.stringify({demo:base+'/universal-demo',pinRequired:false,personalNames:false,privateApiCalls:0,editsPersisted:false,gpsAndNotificationsRequested:false,scenarios:3,privateApiStillProtected:true,browserErrors:errors}));
+}finally{await browser.close();}})().catch(e=>{console.error(e);process.exit(1)});
