@@ -6,6 +6,15 @@ export const siteConfig = {
     'I like being with people and making them laugh, and I try to bring that into everything I do.',
   contactEmail: 'bradkidder@gmail.com',
   headshot: '/headshot.jpg',
+  // Real estate advertising disclosure (Michigan MCL 339.2512e: employing broker's
+  // business name, plus its phone number or street address).
+  brokerage: {
+    name: 'The Local Element',
+    licenseType: 'Real estate salesperson',
+    licensedIn: 'Michigan',
+    address: '620 Century Ave SW, Suite 130, Grand Rapids, MI 49503',
+    phone: '616-202-6551'
+  },
   // Set to an object ({ eyebrow, title, description, href, cta }) to show an announcement card.
   featuredLink: null,
   mainLinks: [
@@ -17,7 +26,7 @@ export const siteConfig = {
       type: 'Pastor'
     },
     {
-      title: 'Brad at The Local Element',
+      title: 'The Local Element',
       description:
         'Relationship-based real estate help for buying, selling, transaction coordination, investment, small commercial, and church property needs.',
       href: 'https://westmi.thelocalelement.com/brad-kidder/',

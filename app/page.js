@@ -108,6 +108,7 @@ export default function HomePage() {
     'Hello from BradKidder.com'
   )}`;
   const featured = siteConfig.featuredLink;
+  const brokerage = siteConfig.brokerage;
   const year = new Date().getFullYear();
 
   return (
@@ -262,7 +263,15 @@ export default function HomePage() {
                   ) : null}
                   <span className="bk-room-type">{link.type}</span>
                   <strong className="bk-room-title">{link.title}</strong>
-                  <span className="bk-room-desc">{link.description}</span>
+                  <span className="bk-room-desc">
+                    {link.description}
+                    {link.type === 'Realtor' && brokerage ? (
+                      <span className="bk-room-legal">
+                        {brokerage.licenseType} licensed in {brokerage.licensedIn} with {brokerage.name} ·{' '}
+                        {brokerage.address} · {brokerage.phone}
+                      </span>
+                    ) : null}
+                  </span>
                   <span className="bk-room-arrow" aria-hidden="true">
                     <ArrowUpRight size={28} />
                   </span>
@@ -356,6 +365,28 @@ export default function HomePage() {
           })}
         </nav>
       </section>
+
+      {brokerage ? (
+        <section className="bk-legal" aria-label="Real estate disclosure">
+          <svg className="bk-eho" viewBox="0 0 64 64" role="img" aria-label="Equal Housing Opportunity">
+            <path d="M32 6 4 28h7v28h42V28h7L32 6Zm14 44H18V25.6L32 14.4l14 11.2V50Z" />
+            <rect x="22" y="30" width="20" height="5" />
+            <rect x="22" y="39" width="20" height="5" />
+          </svg>
+          <p>
+            <strong>{brokerage.name}</strong>
+            <span>
+              {siteConfig.name}, {brokerage.licenseType.toLowerCase()} licensed in {brokerage.licensedIn}. Real
+              estate services are provided through {brokerage.name}.
+            </span>
+            <span>
+              {brokerage.address} ·{' '}
+              <a href={`tel:+1${brokerage.phone.replace(/\D/g, '')}`}>{brokerage.phone}</a>
+            </span>
+            <span>Equal Housing Opportunity.</span>
+          </p>
+        </section>
+      ) : null}
 
       <footer className="bk-foot">
         <span>
