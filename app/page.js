@@ -23,14 +23,31 @@ const mono = localFont({
   display: 'swap'
 });
 
+const shareImage = {
+  url: '/og-image.jpg',
+  width: 1200,
+  height: 630,
+  alt: `${siteConfig.name}: ${siteConfig.tagline}`
+};
+
 export const metadata = {
+  metadataBase: new URL('https://bradkidder.com'),
   title: `${siteConfig.name} — ${siteConfig.tagline}`,
   description: `${siteConfig.name} is a pastor, realtor, and improv comedian in Grand Rapids, Michigan.`,
+  alternates: { canonical: '/' },
   openGraph: {
     title: siteConfig.name,
     description: siteConfig.tagline,
+    url: '/',
+    siteName: siteConfig.name,
     type: 'website',
-    images: [{ url: '/role-pastor.webp', width: 960, height: 1248, alt: `${siteConfig.name} smiling` }]
+    images: [shareImage]
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: siteConfig.name,
+    description: siteConfig.tagline,
+    images: [shareImage]
   }
 };
 
